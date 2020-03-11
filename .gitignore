@@ -1,0 +1,12 @@
+*.csv
+*.mat
+*.asv
+*.fig
+*.eps
+*.xlsx
+
+MMML_GUI.m
+
+/Results/
+/Dati_raksta_fig/
+/Data_28_03_2019/
