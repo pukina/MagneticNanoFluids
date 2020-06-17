@@ -3,7 +3,7 @@ function [] = Wrapper_PlotDeltaVsTime( MMML_dataset )
 %   Detailed explanation goes here
 
     used = struct();
-    used.D107 = [1 2 3 22 5]; % reference by path names 9 or 10; 17 or 23
+    used.D107 = [25]; % reference by path names 9 or 10; 17 or 23
     used.D107_05 = []; % reference by path names
     used.D107_067 = [];
     used.D107_033 = []; %

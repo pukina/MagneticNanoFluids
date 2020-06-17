@@ -2,15 +2,15 @@ function [  ] = Wrapper_ExpPictureGrid( MMML_dataset )
 %Wrapper_ExpPictureGrid image grid each experiment in time
 %   Detailed explanation goes here
 
-    concentrations_to_plot = [1 2 3 4 5]; % seciba pec kartas (D107,_05, _067, 33, 25)
+    concentrations_to_plot = [1]; % seciba pec kartas (D107,_05, _067, 33, 25)
     % define required timestamps in s * 1000ms/s
     t = [0 0.5 1 2 3 4 5 7 10 15]*1000; % tikai para skaitu
     
     omitted = struct();
-    %omitted.D107 = [12 11 9 23 4 2 3 5 24 20]; % reference by path names
-    omitted.D107_05 = []; % reference by path names
-    omitted.D107_067 = [];
-    omitted.D107_033 = [];
+    omitted.D107 = [1 2 4 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 22 23 25]; % reference by path names
+    omitted.D107_05 = [8 10 11 12 13 14 15]; % reference by path names
+    omitted.D107_067 = [7 8 9 10 11 12 13 18 20 21];
+    omitted.D107_033 = [12 14 15 16];
     omitted.D107_025 = [];
     
     % izmeri bounding box experimenta attelosanai

@@ -126,8 +126,8 @@ if skip == false
     fsize=10;
     msize=7;
     fname='Times';
-    timestep = [40.307 - 13.931, 40.372-13.931]; % time is needed from experiment start time (absolute time of frame - exp. start)
-    exp = MMML_dataset.D107_025.f24; % defaults = D107.f1 / D107_033.f16 /
+    timestep = [9.311 - 4.388, 34.032 - 4.388]; % time is needed from experiment start time (absolute time of frame - exp. start)
+    exp = MMML_dataset.D107.f25; % defaults = D107.f1 / D107_033.f16 /
     for j=1:length(timestep)
         frame = exp.delta(:,1) - exp.delta(1,1);
         frame = 1 + length(frame) - length(frame(frame > timestep(j)*1000));
@@ -150,8 +150,8 @@ if skip == false
         %plot(delta(:,1),delta(:,2).^2,'-');
         hold on
         %uzraksti-asiim
-        xlabel('{\it mm}','FontName',fname,'FontSize',fsize);
-        ylabel('{\it Concentration}','FontName',fname,'FontSize',fsize);
+        xlabel('{\it mm}','FontName',fname,'FontSize',20);
+        ylabel('{\it Concentration}','FontName',fname,'FontSize',20);
         legend([num2str(timestep(j)),'s'],'2\delta_{min}','2\delta_{max}', 'erf',...
         'location','northeast','FontName','Times','FontSize',8);
         %legend('boxoff');

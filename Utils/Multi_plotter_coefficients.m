@@ -150,9 +150,9 @@ if skip == false
         
         F = getframe(hh);
         jpeg_string = sprintf('E:/Darbs/MMML/matlab_data/19_12_2019/%i.jpg', g)
-        imwrite(F.cdata, jpeg_string);
+        %imwrite(F.cdata, jpeg_string);
         %hgexport(hh,sprintf('Results/Imgrid_grav_intime/%s.eps', name)); %ja nevajag exportu, tad izkomentçt
-        savefig(hh,sprintf('E:/Darbs/MMML/matlab_data/19_12_2019/%i.fig', g),'compact') %ja nevajag save, tad izkomentçt
+        %savefig(hh,sprintf('E:/Darbs/MMML/matlab_data/19_12_2019/%i.fig', g),'compact') %ja nevajag save, tad izkomentçt
     end
 
 end

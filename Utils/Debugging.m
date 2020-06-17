@@ -25,7 +25,7 @@ while i <= length(concentrations);
     %for j=1:length(experiments)
         exp = Concentration.(experiments{j});
         orgexp = exp;
-        exp.amperi = 999.0; 
+        %exp.amperi = 999.0; 
         
         if normalize
         % normalize concentration values

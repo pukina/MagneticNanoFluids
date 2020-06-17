@@ -2,12 +2,12 @@ function [ ] = Wrapper_PictureGrid( MMML_dataset )
 %Wrapper_PictureGrid plot images normalized
 %   Detailed explanation goes here
 
-    concentrations_to_plot = [1 2 3 4 5]; % seciba pec kartas (D107,_05, _067, 33, 25)
+    concentrations_to_plot = [1]; % seciba pec kartas (D107,_05, _067, 33, 25)
     % define required timestamps in s * 1000ms/s
-    t = [0 1 5 10 30 60 90]*1000;
+    t = [0 1 5 15 30]*1000;
     % omit these experiments by subpath values
     omitted = struct();
-    %omitted.D107 = [12 11 9 23 4 2 3 5 24 20]; % reference by path names
+    omitted.D107 = [1 2 3 4 5 6 8 9 11 12 14 15 16 17 18 20 21 23 24 25]; % reference by path names
     omitted.D107_05 = []; % reference by path names
     omitted.D107_067 = [];
     omitted.D107_033 = [];

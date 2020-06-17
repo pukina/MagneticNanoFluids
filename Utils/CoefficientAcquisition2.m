@@ -1,6 +1,14 @@
-function [ Concentration ] = CoefficientAcquisition2( Concentration )
+function [ Concentration, save_flag ] = CoefficientAcquisition2( Concentration )
 %UNTITLED9 Summary of this function goes here
 %   Detailed explanation goes here
+    save_flag = false;
+    nonullet_kvadratisko = false; %vai nullçt gala grafiku
+    nonullet_deltu = false; %vai nullçt input grafiku
+    if nonullet_kvadratisko ==true && nonullet_deltu==true
+        msg = 'Vienlaicigi nevar nonullet pec abam metodem.';
+        error(msg) 
+    end
+    
     Cfields = fieldnames(Concentration);
     names = cell(1,length(Cfields));
     PLOTS = gobjects(1,length(Cfields));
@@ -19,7 +27,12 @@ function [ Concentration ] = CoefficientAcquisition2( Concentration )
         counter = 0; % skaita
         a=exp.delta; % get deltas
         a(:,1) = a(:,1)- a(1,1); % normalize time values to first frame
-        a(:,2) = a(:,2)/exp.zoom; %parveido no px uz mm
+        if nonullet_deltu == true
+            a(:,2) = a(:,2) - a(1,2); % NONULLEEE LIKNI
+        else
+            sakuma_delta = a(1,2);
+        end
+        a(:,2) = a(:,2) /exp.zoom; %parveido no px uz mm
         
         plot_free = false;
         free_slope = 0;
@@ -44,6 +57,9 @@ function [ Concentration ] = CoefficientAcquisition2( Concentration )
             x = data(ind_min) * time_coefficient; % take only points which are beyond start time
             y = data(:,2); % take correspoinding delta values
             y =(y(ind_min).^2) * delta_ceoffficient; % aprekina indexetajam vertibam 4 delta ^2 /0.13^2
+            if nonullet_kvadratisko == true
+                y = y - (sakuma_delta/ exp.zoom)^2 * delta_ceoffficient; % NONULLEEE LIKNI
+            end
             X = [ones(length(x),1) x];
             % ---- NEW ABOVE------
             
@@ -97,7 +113,12 @@ function [ Concentration ] = CoefficientAcquisition2( Concentration )
             
             
             % Uzzimet abus grafikus - delta^2 vs t un taisnes vienadojumu
-            plot(data(:,1) * time_coefficient, (data(:,2).^2) * delta_ceoffficient,'-','Color',[230,159,0]/255); % originalais 1/4*delta^2 / 0.13^2 grafiks 
+            y_raw = (data(:,2).^2) * delta_ceoffficient;
+            if nonullet_kvadratisko == true
+                y_raw = y_raw - y_raw(1); % nonulle kvadratisko likni
+            end
+            
+            plot(data(:,1) * time_coefficient, y_raw,'-','Color',[230,159,0]/255); % originalais 1/4*delta^2 / 0.13^2 grafiks 
             
 
             % Uzzimet abus grafikus - delta^2 vs t un taisnes vienadojumu
@@ -199,6 +220,7 @@ function [ Concentration ] = CoefficientAcquisition2( Concentration )
                 exp.validity = validity;
                 Concentration.(Cfields{j}) =  exp;
                 %save('MMML_dataset.mat','MMML_dataset');
+                save_flag = true;
                 return
             elseif strcmp(x, 'invalid')
                 exp.validity = 0;
