@@ -2,7 +2,7 @@ function [  ] = Wrapper_ExpPictureGrid( MMML_dataset )
 %Wrapper_ExpPictureGrid image grid each experiment in time
 %   Detailed explanation goes here
 
-    concentrations_to_plot = [1]; % seciba pec kartas (D107,_05, _067, 33, 25)
+    concentrations_to_plot = [1 2 3 4]; % seciba pec kartas (D107,_05, _067, 33, 25)
     % define required timestamps in s * 1000ms/s
     t = [0 0.5 1 2 3 4 5 7 10 15]*1000; % tikai para skaitu
     
@@ -41,7 +41,10 @@ function [  ] = Wrapper_ExpPictureGrid( MMML_dataset )
                     % Pass experiment data, timestamps,concentration value,
                     % bounding box specification (size in mm, offset according to
                     % horizontal and vertical axis) and row count
-                    name = ExpPictureGrid( exp, t, c, izmeri.(concentrations{i}), 2); % last integer is row count
+                    [name, modified_exp] = ExpPictureGrid( exp, t, c, izmeri.(concentrations{i}), 2); % last integer is row count
+                    
+                    MMML_dataset.(concentrations{i}).(eksperiments{j}).grid_angle = modified_exp.grid_angle;
+                    
                     F = getframe(hh);
                     imwrite(F.cdata, sprintf('Results/Imgrid_eachexp/%s.jpeg', name'));
                     %hgexport(hh,sprintf('Results/Imgrid_field_intime/%s.eps', name)); %ja nevajag exportu, tad izkomentçt

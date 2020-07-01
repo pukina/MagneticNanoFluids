@@ -1,8 +1,8 @@
-function [ ] = Wrapper_PictureGrid( MMML_dataset )
+function [ MMML_dataset ] = Wrapper_PictureGrid( MMML_dataset )
 %Wrapper_PictureGrid plot images normalized
 %   Detailed explanation goes here
 
-    concentrations_to_plot = [1]; % seciba pec kartas (D107,_05, _067, 33, 25)
+    concentrations_to_plot = [1 2 3 4]; % seciba pec kartas (D107,_05, _067, 33, 25)
     % define required timestamps in s * 1000ms/s
     t = [0 1 5 15 30]*1000;
     % omit these experiments by subpath values
@@ -35,7 +35,26 @@ function [ ] = Wrapper_PictureGrid( MMML_dataset )
             % required configuration (Oe vs Ram), concentration name field and
             % bounding box specification (size in mm, offset according to
             % horizontal and vertical axis)
-            name = PictureGrid( Concentration, omitted.(concentrations{i}), t, 'Ram', concentrations(i), izmeri.(concentrations{i}));
+            [name, modified_concentration, signal] = PictureGrid( Concentration, omitted.(concentrations{i}), t, 'Ram', concentrations(i), izmeri.(concentrations{i}));
+            
+            eksperimenti = fieldnames(modified_concentration);
+            for j=1:length(eksperimenti)
+                exp_id = Concentration.(eksperimenti{j}).subpath;
+                if ismember(str2num(exp_id), omitted.(concentrations{i})) == false
+                    mod_exp = modified_concentration.(eksperimenti{j});
+                    if isfield(mod_exp,'grid_angle')
+                        MMML_dataset.(concentrations{i}).(eksperimenti{j}).grid_angle = mod_exp.grid_angle;
+                    end
+                    if isfield(mod_exp,'nobide_imgrid')
+                        MMML_dataset.(concentrations{i}).(eksperimenti{j}).nobide_imgrid = mod_exp.nobide_imgrid;
+                    end
+                end
+            end
+            
+            if signal == true
+               break 
+            end
+            
             %hgexport(hh,sprintf('Results/Imgrid_field_intime/%s.eps', name)); %ja nevajag exportu, tad izkomentçt
             %savefig(hh,sprintf('Results/Imgrid_field_intime/%s.fig', name),'compact') %ja nevajag save, tad izkomentçt
             F = getframe(hh);
@@ -47,6 +66,8 @@ function [ ] = Wrapper_PictureGrid( MMML_dataset )
             %hgexport(hh,sprintf('Results/Imgrid_field_intime/%s.eps', name));
             %savefig(hh,sprintf('Results/Imgrid_field_intime/%s.fig', name),'compact')
             imwrite(F.cdata, sprintf('Results/Imgrid_field_intime/%s.jpeg', name'));
+            
+
         end
     end
 

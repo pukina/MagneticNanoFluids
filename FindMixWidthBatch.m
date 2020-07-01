@@ -36,7 +36,7 @@ Wrapper_CoefficientAcquisition_NonDim( MMML_dataset );
 
 %% #10: Plot image grid normalized
 % ---REQUIRES TESTING---
-Wrapper_PictureGrid( MMML_dataset );
+MMML_dataset = Wrapper_PictureGrid( MMML_dataset );
 
 %% #11: Image grid each experiment in time
 % ---REQUIRES TESTING---

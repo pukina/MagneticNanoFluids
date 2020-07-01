@@ -1,4 +1,4 @@
-function [ name ] = ExpPictureGrid( exp, t, c, izmers, rows )
+function [ name, exp ] = ExpPictureGrid( exp, t, c, izmers, rows )
 %UNTITLED10 Summary of this function goes here
 %   Detailed explanation goes here    
 %   Plot picture grid with same scale
@@ -61,74 +61,15 @@ function [ name ] = ExpPictureGrid( exp, t, c, izmers, rows )
 
     placex = round(scale_x * x_dim); % aprekina nepiecieðamo attelâ izmçru pikseïos
     placey = round(scale_y * y_dim);
-
-    nobide_x = izmers(2);
-    xmid = x_dim /2 + frame(1) +nobide_x; %vidus izmçri anotetajam bounding box pret pilnâ attela sakuma koordinçtu
-    % get y coordinate of transition line for 1st image
-    cs = exp.cs(:,1);
-    nobide_y = izmers(3);
-    ymid = exp.bbox(3) + length(find(cs<0.5)) + nobide_y;
-    %ymid = y_dim/2 + frame(3);
-    m = 1;
-    for i=1:length(t)
-        % ja neeksistç tâds indekss tad nezîmç
-        if isnan(ind(i))
-            continue
-        end
-
-        im=imread(fullfile(path,names(ind(i)).name));%read image
-
-
-        xstart = max(1, floor(xmid - placex/2)); % sakuma koordinâta x asij. Vienmçr > 1. 
-        xend = min(size(im,2), floor(xmid + placex/2)); % beigu koordinâta x asij. Vienmçr mazâka par attçla dimensiju.
-        padx = max(0, placex -(xend-xstart)); % cik papildus pikseïi vajadzîgi kopâ. 
-        padx_right = min(size(im,2), xend+padx) - xend; % vispirms pikseïu vieno no labâs puses cik var.
-        padx_left = padx - padx_right; % atlikuðos no kreisâs puses
-        xend = xend+padx_right; % modificçts beigu punkts
-        xstart = max(1, xstart-padx_left); %modificçts jaunais sakuma punkts
-
-        %Y koordinâtçm netiek modificçts
-        ystart = max(1, floor(ymid - placey/2)); % 
-        yend = min(size(im,1), floor(ymid + placey/2)); % 
-
-        im = im(ystart:yend, xstart:xend); % no pilna attela paòem izraudzîto kadru
-        % izveido attçla template ar nepiecieðamajâm dimensijâm un
-        % background krâsâ
-        placeholder=ones(max(placey,size(im,1)), max(placex,size(im,2))) * background;
-        im = mat2gray(im,[bws(1),bws(2)]); % normalizç kadra pikseïus lai bûtu kontrasts
-
-        %uzlieku offsetus kadra sakuma un beigu punktam
-        offsetx = max(0,floor((size(placeholder,2) - size(im,2))/2));
-        offsety = max(0,floor((size(placeholder,1) - size(im,1))/2));
-        % ievieto kadru placeholderî
-        placeholder(1+ offsety:size(im,1)+offsety, 1+ offsetx:size(im,2)+offsetx)=im;
-        % mainigo parsaukðana çrtîbai
-        im = placeholder;
-        %im = imresize(im,0.1); %scalo par koeficientu attelu
-        im = imresize(im, [300,300]); % resize attelu uz noteiktam dimensijam, piem 150x150
-        
-        
-        j = mod(i-1, v);
-        if i / v > m
-           m = m + 1; 
-        end
-        
-        xcoordinate = dxs+dxx*(j) + dx*(j);
-        ycoordinate = dys+dyy*(rows-m) + dy*(rows-m);
-        h=axes('Position',[xcoordinate, ycoordinate, dx, dy]); % vieta kur attçlu novietot
-
-        %break
-        imshow(im,'Border','tight'); % uzzimç attçlu
-        hc=axes('Position',[0 0 1 1],'Visible','off');
-        text(xcoordinate + 0.5*(dxx+dx), ycoordinate,[sprintf('t = %g ',t(i)/1000),'s'],...
-        'VerticalAlignment','top','HorizontalAlignment','center','FontName','Times','FontSize',10,...
-        'Rotation',0);
-        drawnow
-        %break
+    
+    if isfield(exp,'nobide_imgrid')
+        nobide_x =  exp.nobide_imgrid(2);
+        nobide_y =  exp.nobide_imgrid(2);
+    else
+        nobide_x =  izmers(2);
+        nobide_y =  izmers(3);
     end
-    %break
-    
-    
+
     if c == 1
         rag = 4657;
     elseif c == 0.67
@@ -145,4 +86,111 @@ function [ name ] = ExpPictureGrid( exp, t, c, izmers, rows )
     %name = strcat('Rag_',num2str(rag,'%.0f'),'_',config_name_,'_',)
     ID = str2double(exp.subpath);
     name = sprintf('Rag_%.0f_Ram_%.0f_subpath_%i_%ix%imm_v1', rag, RAM,ID, izmers(1), izmers(1));
+    figname = sprintf('Conc: %.2f / Exp: %s',c, exp.subpath);
+    set(gcf,'name',figname,'numbertitle','off')
+    
+    
+    if isfield(exp,'grid_angle')
+        adjustment_angle = exp.grid_angle;
+    else
+        adjustment_angle =0;
+    end
+
+    while true
+        xmid = x_dim /2 + frame(1) +nobide_x; %vidus izmçri anotetajam bounding box pret pilnâ attela sakuma koordinçtu
+        % get y coordinate of transition line for 1st image
+        cs = exp.cs(:,1);
+        ymid = exp.bbox(3) + length(find(cs<0.5)) + nobide_y;
+        %ymid = y_dim/2 + frame(3);
+        m = 1;
+        for i=1:length(t)
+            % ja neeksistç tâds indekss tad nezîmç
+            if isnan(ind(i))
+                continue
+            end
+
+            im=imread(fullfile(path,names(ind(i)).name));%read image
+
+
+            xstart = max(1, floor(xmid - placex/2)); % sakuma koordinâta x asij. Vienmçr > 1. 
+            xend = min(size(im,2), floor(xmid + placex/2)); % beigu koordinâta x asij. Vienmçr mazâka par attçla dimensiju.
+            padx = max(0, placex -(xend-xstart)); % cik papildus pikseïi vajadzîgi kopâ. 
+            padx_right = min(size(im,2), xend+padx) - xend; % vispirms pikseïu vieno no labâs puses cik var.
+            padx_left = padx - padx_right; % atlikuðos no kreisâs puses
+            xend = xend+padx_right; % modificçts beigu punkts
+            xstart = max(1, xstart-padx_left); %modificçts jaunais sakuma punkts
+
+            %Y koordinâtçm netiek modificçts
+            ystart = max(1, floor(ymid - placey/2)); % 
+            yend = min(size(im,1), floor(ymid + placey/2)); % 
+
+            % pad frame with pixels so angle can be adjusted without
+            % problems
+            y_end_free = size(im,1) - yend;
+            x_end_free = size(im,2) - xend;
+            padding_free = min([y_end_free x_end_free, (ystart - 1), (xstart -1)]);
+            p = min(padding_free, 40);
+
+            im = im(ystart-p:yend+p, xstart-p:xend+p); % no pilna attela paòem izraudzîto kadru
+            % rotate and crop image
+            im = imrotate(im,adjustment_angle,'bilinear','crop');
+            im = im(p+1:end-p, p+1:end-p);
+
+            %im = im(ystart:yend, xstart:xend); % no pilna attela paòem izraudzîto kadru
+
+            % izveido attçla template ar nepiecieðamajâm dimensijâm un
+            % background krâsâ
+            placeholder=ones(max(placey,size(im,1)), max(placex,size(im,2))) * background;
+            im = mat2gray(im,[bws(1),bws(2)]); % normalizç kadra pikseïus lai bûtu kontrasts
+
+            %uzlieku offsetus kadra sakuma un beigu punktam
+            offsetx = max(0,floor((size(placeholder,2) - size(im,2))/2));
+            offsety = max(0,floor((size(placeholder,1) - size(im,1))/2));
+            % ievieto kadru placeholderî
+            placeholder(1+ offsety:size(im,1)+offsety, 1+ offsetx:size(im,2)+offsetx)=im;
+            % mainigo parsaukðana çrtîbai
+            im = placeholder;
+            %im = imresize(im,0.1); %scalo par koeficientu attelu
+            im = imresize(im, [300,300]); % resize attelu uz noteiktam dimensijam, piem 150x150
+
+
+            j = mod(i-1, v);
+            if i / v > m
+               m = m + 1; 
+            end
+
+            xcoordinate = dxs+dxx*(j) + dx*(j);
+            ycoordinate = dys+dyy*(rows-m) + dy*(rows-m);
+            h=axes('Position',[xcoordinate, ycoordinate, dx, dy]); % vieta kur attçlu novietot
+
+            %break
+            imshow(im,'Border','tight'); % uzzimç attçlu
+            hc=axes('Position',[0 0 1 1],'Visible','off');
+            text(xcoordinate + 0.5*(dxx+dx), ycoordinate,[sprintf('t = %g ',t(i)/1000),'s'],...
+            'VerticalAlignment','top','HorizontalAlignment','center','FontName','Times','FontSize',10,...
+            'Rotation',0);
+            drawnow
+            %break
+        end
+        %break
+        
+        prompt = ('Is this angle acceptable? [Default: 0 degrees] Write "y" if good. To adjust enter degrees.\n');
+        x = input(prompt,'s');
+        %x  = 'yes';
+        if isfield(exp,'grid_angle')
+            break
+        elseif strcmp(x, 'y')
+            % SAVE RESULT PLZZZZZ
+            exp.grid_angle = adjustment_angle;
+            break
+        else
+            adjustment_angle =  str2num(x);
+        end
+    end
+    
+    
+    
+    
+    
+
 end
