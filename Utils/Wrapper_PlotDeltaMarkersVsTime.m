@@ -4,9 +4,9 @@ function [  ] = Wrapper_PlotDeltaMarkersVsTime( MMML_dataset )
 
     used = struct();
     used.D107 = []; % reference by path names 9 or 10; 17 or 23
-    used.D107_05 = [1]; % reference by path names
-    used.D107_067 = [];
-    used.D107_033 = []; %
+    used.D107_05 = [1 3 5 13 16]; % reference by path names
+    used.D107_067 = [2 3 4 13 24];
+    used.D107_033 = [9 12 16 17 19]; %
     used.D107_025 = [];
 
     concentrations = fieldnames(MMML_dataset);

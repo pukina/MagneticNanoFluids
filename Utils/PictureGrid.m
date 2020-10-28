@@ -187,9 +187,9 @@ function [ name, Koncentracija, signal ] = PictureGrid( Koncentracija,omitted, t
             end
             
             %x  = 'yes';
-            if isfield(exp,'grid_angle') && isfield(exp,'nobide_imgrid')
-                break
-            elseif strcmp(response_1, 'y') || strcmp(response_1, 'end')
+            %if isfield(exp,'grid_angle') && isfield(exp,'nobide_imgrid')
+            %    break
+            if strcmp(response_1, 'y') || strcmp(response_1, 'end')
                 % SAVE RESULT PLZZZZZ
                 Koncentracija.(eksperimenti{order(j)}).grid_angle = adjustment_angle;
                 if exist('nobide_imgrid','var')

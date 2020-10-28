@@ -1,4 +1,4 @@
-function [folderis,mt,oe,delta_kv4,delta_kv4_0,stdev,ram,delta_kv4_bd,delta_bd,experimental] = import_deltamcv_csv(filename, startRow, endRow)
+function [folderis,mt,oe,oe_kv,delta_kv4,sakuma_pacelums,stdev,ram,delta,delta_mc_bd,slope,slope_stdev,delta_res,delta_res_bd,experimental] = import_deltamcv_csv(filename, startRow, endRow)
 %IMPORTFILE Import numeric data from a text file as column vectors.
 %   [FOLDERIS,MT,OE,DELTA_KV4,DELTA_KV4_0,STDEV,RAM,DELTA_KV4_BD,DELTA_BD,EXPERIMENTAL]
 %   = IMPORTFILE(FILENAME) Reads data from text file FILENAME for the
@@ -33,8 +33,13 @@ end
 %	column8: double (%f)
 %   column9: double (%f)
 %	column10: double (%f)
+%   column11: double (%f)
+%   column12: double (%f)
+%   column13: double (%f)
+%   column14: double (%f)
+%   column15: double (%f)
 % For more information, see the TEXTSCAN documentation.
-formatSpec = '%f%f%f%f%f%f%f%f%f%f%[^\n\r]';
+formatSpec = '%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%[^\n\r]';
 
 %% Open the text file.
 fileID = fopen(filename,'r');
@@ -65,12 +70,19 @@ fclose(fileID);
 folderis = dataArray{:, 1};
 mt = dataArray{:, 2};
 oe = dataArray{:, 3};
-delta_kv4 = dataArray{:, 4};
-delta_kv4_0 = dataArray{:, 5};
-stdev = dataArray{:, 6};
-ram = dataArray{:, 7};
-delta_kv4_bd = dataArray{:, 8};
-delta_bd = dataArray{:, 9};
-experimental = dataArray{:, 10};
+oe_kv = dataArray{:, 4};
+delta_kv4 = dataArray{:, 5};
+sakuma_pacelums = dataArray{:, 6};
+stdev = dataArray{:, 7};
+ram = dataArray{:, 8};
+delta = dataArray{:, 9};
+delta_mc_bd = dataArray{:, 10};
+slope = dataArray{:, 11};
+slope_stdev = dataArray{:, 12};
+delta_res = dataArray{:, 13};
+delta_res_bd = dataArray{:, 14};
+experimental = dataArray{:, 15};
+
+
 
 

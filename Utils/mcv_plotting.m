@@ -1,57 +1,64 @@
 
-filenames = {'../dati_deltaVSbezdim/D107.csv'};
-concentration_keys =  {'D107'};
+filenames = {'\..\dati_deltaVSbezdim\D107.csv','\..\dati_deltaVSbezdim\066_D107.csv','\..\dati_deltaVSbezdim\05_D107.csv','\..\dati_deltaVSbezdim\033_D107.csv'};
+concentration_keys =  {'MF_1','MF_2','MF_3','MF_4'}; %{'D107','D107_0_67','D107_0_5','D107_0_33'}
 
-concentrations = fieldnames(MMML_dataset);
+plot_errorbars = true;
+
+%concentrations = fieldnames(MMML_dataset);
 data = struct();
 for i=1:numel(concentration_keys)
     conc_data = struct();
-    filname= filenames(i);
-    [folderis,mt,oe,delta_kv4,delta_kv4_0,stdev,ram,delta_kv4_bd,delta_bd,experimental] = import_deltamcv_csv(filename);
+    filename = filenames(i);
+    filename = fullfile(pwd,filename);
+    [folderis,mt,oe,oe_kv,delta_kv4,sakuma_pacelums,stdev,ram,delta,delta_mc_bd,slope,slope_stdev,delta_res,delta_res_bd,experimental] = import_deltamcv_csv(filename{1});
     % datu formatesana
     conc_data.folderis = folderis;
     conc_data.mt = mt;
     conc_data.oe = oe;
+    conc_data.oe_kv = oe_kv;
     conc_data.delta_kv4 = delta_kv4;
-    conc_data.delta_kv4_0 = delta_kv4_0;
+    conc_data.sakuma_pacelums = sakuma_pacelums;
     conc_data.stdev = stdev;
     conc_data.ram = ram;
-    conc_data.delta_kv4_bd = delta_kv4_bd;
-    conc_data.delta_bd = delta_bd;
+    conc_data.delta = delta;
+    conc_data.delta_mc_bd = delta_mc_bd;
+    conc_data.slope = slope;
+    conc_data.slope_stdev = slope_stdev;
+    conc_data.delta_res = delta_res;
+    conc_data.delta_res_bd = delta_res_bd;
     conc_data.experimental = experimental;
+    %aprekinatas jaunas vertibas
+    conc_data.delta_res_kv4 = (delta_res.^2)/4;
+    conc_data.delta_res_bd_kv4 = (delta_res_bd.^2)/4;
+    conc_data.logdelta_kv4 = log(delta_kv4);
+    conc_data.logoe_kv = log(oe_kv);
+    conc_data.ram_vecaisdiffkoef = ram*125/60;
+    conc_data.delta_mc_bd_kv4 = (delta_mc_bd.^2)/4;
+    conc_data.logdelta_mc_bd_kv4 = log((delta_mc_bd.^2)/4);
+    conc_data.logram_v = log(ram*125/60);
     % datu masivs
     data.(concentration_keys{i}) = conc_data;
 end
 
-% plot delta^2 / 4 vs Oe^2
-Cols=[230,159,0;
-      86,180,233;
-      0,158,115;
-      240,228,66;
-      0,114,178;
-      213,94,0;
-      204,121,167]/255; % color format
-names = cell(1,length(concentration_keys) * 2);
-hh=initFigure();
-hold on
-for i=1:numel(concentration_keys)
-    raw_indexes = data.(concentration_keys{i}).experimental;
-    for j = 1:2
-        
-        name_index = i*2-1 + j-1;
-        color = Cols(name_index,:);
-        if j - 1 == 0
-            stage = 'estimated';
-            indexes = find(raw_indexes == 0);
-        else
-            stage = 'experimental';
-            indexes = find(raw_indexes == 1);
-        end
-        names{name_index} = [concentration_keys{i},' ',stage];
-        x = data.(concentration_keys{i}).oe(indexes);
-        y = data.(concentration_keys{i}).delta_kv4(indexes);
-        scatter(x,y,[],color)
-    end
-end
-legend(names);
-    
+% plot delta vs Oe^2
+Cols=[182,69,80;
+      182,69,80;
+      104,108,183;
+      104,108,183;
+      75,174,128;
+      75,174,128;
+      255,153,204;
+      255,153,204]/255; % color format
+symbs1={'o';'s';'d';'^';'p';'v'};
+symbs={'y-';'b-';'g-';'c-';'m-';'r-'};
+%%
+%plot_mcv(data,concentration_keys,'delta','oe','delta_res', Cols, symbs1,plot_errorbars,1/2,false)
+%plot_mcv(data,concentration_keys,'delta','oe_kv','delta_res', Cols, symbs1,plot_errorbars,1/2,false)
+%plot_mcv(data,concentration_keys,'delta_kv4','oe','delta_res_kv4', Cols, symbs1,plot_errorbars, 1/2,false)%false, ja izðíirtspeja; true, ja STDEV
+%plot_mcv(data,concentration_keys,'delta_mc_bd','ram','delta_res_bd', Cols, symbs1,plot_errorbars,1/2,false)
+plot_mcv(data,concentration_keys,'slope','oe','slope_stdev', Cols, symbs1,plot_errorbars,1,true)
+%plot_mcv(data,concentration_keys,'logdelta_kv4','logoe_kv','', Cols, symbs1,false,1,false)
+%plot_mcv(data,concentration_keys,'delta_mc_bd','ram_vecaisdiffkoef','delta_res_bd', Cols, symbs1,plot_errorbars,1/2,false)
+%plot_mcv(data,concentration_keys,'delta_kv4','oe_kv','delta_res_kv4', Cols, symbs1,plot_errorbars, 1/2,false)
+%plot_mcv(data,concentration_keys,'logdelta_mc_bd_kv4','logram_v','', Cols, symbs1,false,1,false)
+%plot_mcv(data,concentration_keys,'delta_mc_bd_kv4','ram_vecaisdiffkoef','delta_res_bd_kv4', Cols, symbs1,plot_errorbars,1/2,false)
